@@ -7,6 +7,15 @@
 #include "InputActionValue.h"
 #include "Batman.generated.h"
 
+UENUM(BlueprintType)
+enum class EPath : uint8
+{
+	Middle UMETA(DisplayName = "Middle"),
+	Left UMETA(DisplayName = "Left"),
+	Right UMETA(DisplayName = "Right"),
+	NotSet UMETA(Displayname = "NotSet")
+};
+
 
 
 UCLASS()
@@ -22,7 +31,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void Move(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void MoveLeft(const FInputActionValue& Value);
 
 public:	
 	// Called every frame
@@ -37,7 +47,10 @@ protected:
 	class UInputMappingContext * MappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
-	class UInputAction * MoveAction;
+	class UInputAction * MoveRightAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * MoveLeftAction;
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -52,8 +65,30 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
 	class UCameraComponent *Camera;
 
-	FVector MovementDirection;
+	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
+	float MoveDistance = 300.f;
+
+	FVector StartLocation;
+	FVector LeftLocation;
+	FVector MiddleLocation;
+	FVector RightLocation;
+
+	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
+	FVector MovementVelocity = FVector(0, 3000, 0);
+	
 
 	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
 	float MovementSpeed = 20.0f;
+
+	UPROPERTY()
+	EPath CurrentPath;
+
+	UPROPERTY()
+	EPath PreviousPath;
+
+	UPROPERTY()
+	bool bIsMoving;
+
+	UPROPERTY()
+	float MovementAmount = 300.f;
 };

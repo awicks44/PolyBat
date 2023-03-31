@@ -4,7 +4,15 @@
     <projectFile>PolyBat.uproject</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70fb62e4-65c2-42cd-8390-387eabd917b3" name="Changes" comment="" />
+    <list default="true" id="70fb62e4-65c2-42cd-8390-387eabd917b3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PolyBat.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PolyBat.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/GameObjects/BPs/BP_Batman.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/GameObjects/BPs/BP_Batman.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/GameObjects/Input/IA_Move.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/GameObjects/Input/IMC_Batman.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/GameObjects/Input/IMC_Batman.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Maps/Practice.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/Practice.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/PolyBat/Batman.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/PolyBat/Batman.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/PolyBat/Batman.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/PolyBat/Batman.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -151,7 +159,7 @@
       <updated>1679016541810</updated>
       <workItem from="1679016544341" duration="1470000" />
       <workItem from="1679102458851" duration="1945000" />
-      <workItem from="1679106088753" duration="8195000" />
+      <workItem from="1679106088753" duration="36725000" />
     </task>
     <servers />
   </component>

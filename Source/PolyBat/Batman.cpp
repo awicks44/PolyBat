@@ -31,6 +31,8 @@ ABatman::ABatman()
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	
+	CurrentPath = EPath::Middle;
+	
 }
 
 // Called when the game starts or when spawned
@@ -38,35 +40,111 @@ void ABatman::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController *PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController *PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem * Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 	}
+
+	StartLocation = GetActorLocation();
 }
 
-void ABatman::Move(const FInputActionValue& Value)
+void ABatman::MoveRight(const FInputActionValue& Value)
 {
-	if (const float MoveAmt = Value.Get<float>(); MoveAmt != 0.f)
+	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EPath::Right)
 	{
-		MovementDirection.X = FMath::Clamp(MoveAmt, -1.0f, 1.0f);
+		UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Move Right"));
+		
+		bIsMoving = true;
+		MovementVelocity = MovementVelocity.GetAbs();
+		PreviousPath = CurrentPath;
+
+		UE_LOG(LogTemp, Error, TEXT("Batman (C++) | Previous Path: %s | Current Path: %s "), *UEnum::GetValueAsString(PreviousPath), *UEnum::GetValueAsString(CurrentPath));
+		
+		if (CurrentPath == EPath::Middle)
+		{
+			CurrentPath = EPath::Right;
+			UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Path -> Right"));
+		}
+		else if (CurrentPath == EPath::Left)
+		{
+			CurrentPath = EPath::Middle;
+			UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Path -> Middle"));
+		}
+
+		UE_LOG(LogTemp, Error, TEXT("Batman (C++) | Previous Path: %s | Current Path: %s "), *UEnum::GetValueAsString(PreviousPath), *UEnum::GetValueAsString(CurrentPath));
 	}
 }
 
+void ABatman::MoveLeft(const FInputActionValue& Value)
+{
+	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EPath::Left)
+	{
+		//MovementVelocity *= -1;
+		bIsMoving = true;
+		MovementVelocity = -MovementVelocity.GetAbs();
+		PreviousPath = CurrentPath;
+		
+		if (CurrentPath == EPath::Middle)
+		{
+			CurrentPath = EPath::Left;
+		}
+		else if (CurrentPath == EPath::Right)
+		{
+			CurrentPath = EPath::Middle;
+		}
+	}
+}
 
 // Called every frame
 void ABatman::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (!MovementDirection.IsZero())
+	
+	if (bIsMoving)
 	{
-		const FVector NewLocation = GetActorLocation() + (MovementDirection * DeltaTime * MovementSpeed);
-		SetActorLocation(NewLocation);
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation = CurrentLocation + (MovementVelocity * DeltaTime);
+		SetActorLocation(CurrentLocation);
 
-		MovementDirection.X = 0;
+		UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Movement Velocity %s Location %s "),*MovementVelocity.ToString(), *GetActorLocation().ToString());
+
+		RightLocation = FVector(CurrentLocation.X, MovementAmount, 90);
+		MiddleLocation = FVector(CurrentLocation.X, 0, 90);
+		LeftLocation = FVector(CurrentLocation.X, -MovementAmount, 90);
+		
+		const float DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
+
+		if (DistanceMoved > MoveDistance)
+		{
+			const FVector MoveDirection = MovementVelocity.GetSafeNormal();
+			UE_LOG(LogTemp, Error, TEXT("Batman (C++) | DistanceMoved %f | Movement Velocity %s | MoveDirection %s "), DistanceMoved, *MovementVelocity.ToString(), *MoveDirection.ToString());
+			StartLocation = StartLocation + MoveDirection * MoveDistance;
+			SetActorLocation(StartLocation);
+			
+			bIsMoving = false;
+
+			if (FVector::PointsAreNear(StartLocation, MiddleLocation, 25.f))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Middle Location %s "), *GetActorLocation().ToString());
+				SetActorLocation(MiddleLocation);
+				StartLocation = MiddleLocation;
+			}
+			else if (FVector::PointsAreNear(StartLocation, RightLocation, 25.f))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Right Location %s "), *GetActorLocation().ToString());
+				SetActorLocation(RightLocation);
+				StartLocation = RightLocation;
+			}
+			else if (FVector::PointsAreNear(StartLocation, LeftLocation, 25.f))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Left Location %s "), *GetActorLocation().ToString());
+				SetActorLocation(LeftLocation);
+				StartLocation = LeftLocation;
+			}
+		}
 	}
 }
 
@@ -77,7 +155,8 @@ void ABatman::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	if (UEnhancedInputComponent *EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABatman::Move);
+		EnhancedInputComponent->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ABatman::MoveRight);
+		EnhancedInputComponent->BindAction(MoveLeftAction, ETriggerEvent::Triggered, this, &ABatman::MoveLeft);
 	}
 }
 
