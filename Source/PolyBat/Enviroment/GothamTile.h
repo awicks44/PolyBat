@@ -6,6 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "GothamTile.generated.h"
 
+UENUM(BlueprintType) 
+enum class EMovementState : uint8
+{
+	SetInLocation,
+	ChangingLocation
+};
+
 UCLASS()
 class POLYBAT_API AGothamTile : public AActor
 {
@@ -24,7 +31,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UFUNCTION()
+	void AdjustPosition(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+private:
+	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
+	USceneComponent *Root;
+	
 	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
 	class UStaticMeshComponent * Mesh;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="PolyBat|Components")
+	class UBoxComponent *Trigger;
+
+	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
+	EMovementState MovementState;
 
 };

@@ -8,7 +8,7 @@
 #include "Batman.generated.h"
 
 UENUM(BlueprintType)
-enum class EPath : uint8
+enum class EOtherPath : uint8
 {
 	Middle UMETA(DisplayName = "Middle"),
 	Left UMETA(DisplayName = "Left"),
@@ -81,10 +81,10 @@ private:
 	float MovementSpeed = 20.0f;
 
 	UPROPERTY()
-	EPath CurrentPath;
+	EOtherPath CurrentPath;
 
 	UPROPERTY()
-	EPath PreviousPath;
+	EOtherPath PreviousPath;
 
 	UPROPERTY()
 	bool bIsMoving;

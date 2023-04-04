@@ -31,7 +31,7 @@ ABatman::ABatman()
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	
-	CurrentPath = EPath::Middle;
+	CurrentPath = EOtherPath::Middle;
 	
 }
 
@@ -53,24 +53,25 @@ void ABatman::BeginPlay()
 
 void ABatman::MoveRight(const FInputActionValue& Value)
 {
-	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EPath::Right)
+	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EOtherPath::Right)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Move Right"));
 		
 		bIsMoving = true;
+		// ensure that movement velocity is always going right when they press right (make it positive)
 		MovementVelocity = MovementVelocity.GetAbs();
 		PreviousPath = CurrentPath;
 
 		UE_LOG(LogTemp, Error, TEXT("Batman (C++) | Previous Path: %s | Current Path: %s "), *UEnum::GetValueAsString(PreviousPath), *UEnum::GetValueAsString(CurrentPath));
 		
-		if (CurrentPath == EPath::Middle)
+		if (CurrentPath == EOtherPath::Middle)
 		{
-			CurrentPath = EPath::Right;
+			CurrentPath = EOtherPath::Right;
 			UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Path -> Right"));
 		}
-		else if (CurrentPath == EPath::Left)
+		else if (CurrentPath == EOtherPath::Left)
 		{
-			CurrentPath = EPath::Middle;
+			CurrentPath = EOtherPath::Middle;
 			UE_LOG(LogTemp, Warning, TEXT("Batman (C++) | Path -> Middle"));
 		}
 
@@ -80,20 +81,22 @@ void ABatman::MoveRight(const FInputActionValue& Value)
 
 void ABatman::MoveLeft(const FInputActionValue& Value)
 {
-	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EPath::Left)
+	if (const bool IsPressed = Value.Get<bool>() && CurrentPath != EOtherPath::Left)
 	{
-		//MovementVelocity *= -1;
 		bIsMoving = true;
+
+		// ensure that movement velocity is always going left when they press left (make it negative)
 		MovementVelocity = -MovementVelocity.GetAbs();
+		
 		PreviousPath = CurrentPath;
 		
-		if (CurrentPath == EPath::Middle)
+		if (CurrentPath == EOtherPath::Middle)
 		{
-			CurrentPath = EPath::Left;
+			CurrentPath = EOtherPath::Left;
 		}
-		else if (CurrentPath == EPath::Right)
+		else if (CurrentPath == EOtherPath::Right)
 		{
-			CurrentPath = EPath::Middle;
+			CurrentPath = EOtherPath::Middle;
 		}
 	}
 }
