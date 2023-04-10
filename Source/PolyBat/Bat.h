@@ -39,7 +39,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
 	class UInputAction * MoveLeftAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * JumpAction;
+
 private:
+	UPROPERTY()
+	bool bReadyToRun;
+	
 	UPROPERTY()
 	EPath CurrentPath;
 
@@ -51,11 +57,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
 	float MoveDistance = 300.f;
-
 	
-
 	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
-	FVector MovementVelocity = FVector(0, 3000, 0);
+	FVector MovementVelocity = FVector(750, 3000, 0);
 	
 	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
 	float MovementSpeed = 20.0f;
@@ -70,6 +74,7 @@ protected:
 	virtual void BeginPlay() override;
 	void MoveRight(const FInputActionValue& Value);
 	void MoveLeft(const FInputActionValue& Value);
+	void MakeJump(const FInputActionValue & Value);
 
 public:
 	// Sets default values for this character's properties
@@ -85,5 +90,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return Camera; }
+
+	FORCEINLINE void SetReadyToRun(const bool Value) { bReadyToRun = Value;}
+	UFUNCTION(BlueprintPure, Category="PolyBat")
+	FORCEINLINE bool GetReadyToRun() const { return bReadyToRun; }
+	
 
 };
