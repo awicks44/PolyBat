@@ -20,7 +20,7 @@ AGothamTile::AGothamTile()
 	Trigger = CreateDefaultSubobject<UBoxComponent>("TriggerArea");
 	Trigger->SetupAttachment(Mesh);
 
-	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AGothamTile::AdjustPosition);
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AGothamTile::ExitTriggerOverlapped);
 
 }
 
@@ -30,6 +30,7 @@ void AGothamTile::BeginPlay()
 	Super::BeginPlay();
 
 	MovementState = EMovementState::SetInLocation;
+	GothamTriggerState = EGothamTriggerState::Trigger_Waiting;
 }
 
 // Called every frame
@@ -39,28 +40,31 @@ void AGothamTile::Tick(float DeltaTime)
 
 }
 
-void AGothamTile::AdjustPosition(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AGothamTile::ChangePosition()
 {
-	if (OtherActor->ActorHasTag("Batman") && MovementState != EMovementState::ChangingLocation)
+	MovementState = EMovementState::SetInLocation;
+
+	const FVector CurrentPosition = GetActorLocation();
+	// get the mesh size going in x direction
+	FVector Origin;
+	FVector BoxExtent;
+	GetActorBounds(true, Origin, BoxExtent);
+
+	const float XSize = BoxExtent.X * 2;
+	const float NewX = XSize * 2 + CurrentPosition.X;
+
+	const FVector NewPosition = FVector(NewX, CurrentPosition.Y, CurrentPosition.Z);
+	SetActorLocation(NewPosition);
+	
+}
+
+void AGothamTile::ExitTriggerOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (OtherActor->ActorHasTag("Batman") && GothamTriggerState != EGothamTriggerState::Trigger_Hit)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hi Batman"));
-		MovementState = EMovementState::ChangingLocation;
-
-		// get current position
-		const FVector CurrentPosition = GetActorLocation();
-		// get the mesh size going in x direction
-		FVector Origin;
-		FVector BoxExtent;
-		GetActorBounds(true, Origin, BoxExtent);
-		UE_LOG(LogTemp, Warning, TEXT("Gotham Tile (C++) | X Units: %f"), BoxExtent.X);
-		// add 3/4 of the size and add it to the current position (to make it the new position)
-		const float XOffset = BoxExtent.X + (BoxExtent.X * .75) ;
-		const FVector NewPosition = FVector(CurrentPosition.X + XOffset, CurrentPosition.Y, CurrentPosition.Z);
-		UE_LOG(LogTemp, Error, TEXT("Gotham Tile (C++) | New Position: %s"), *NewPosition.ToString());
-
-		SetActorLocation(NewPosition);
-
-		MovementState = EMovementState::SetInLocation;
+		GothamTriggerState = EGothamTriggerState::Trigger_Hit;
+		
 	}
 }
 
