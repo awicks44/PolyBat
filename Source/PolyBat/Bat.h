@@ -24,10 +24,10 @@ class POLYBAT_API ABat : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PolyBat|Components")
 	class USpringArmComponent *SpringArm;
 
-	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PolyBat|Components")
 	class UCameraComponent *Camera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
@@ -74,6 +74,8 @@ protected:
 	virtual void BeginPlay() override;
 	void MoveRight(const FInputActionValue& Value);
 	void MoveLeft(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PolyBat|Functions")
 	void MakeJump(const FInputActionValue & Value);
 
 public:

@@ -176,7 +176,7 @@ void ABat::MoveLeft(const FInputActionValue& Value)
 	}
 }
 
-void ABat::MakeJump(const FInputActionValue& Value)
+void ABat::MakeJump_Implementation(const FInputActionValue& Value)
 {
 	if (const bool IsPressed = Value.Get<bool>())
 	{
@@ -184,5 +184,6 @@ void ABat::MakeJump(const FInputActionValue& Value)
 		Jump();
 	}
 }
+
 
 
