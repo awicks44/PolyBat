@@ -42,6 +42,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
 	class UInputAction * JumpAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * KickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * PunchAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="PolyBat|Animation")
+	TArray<class UAnimMontage *> KickMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="PolyBat|Animation")
+	TArray<class UAnimMontage *> PunchMontage;
+	
+
 private:
 	UPROPERTY()
 	bool bReadyToRun;
@@ -74,6 +87,12 @@ protected:
 	virtual void BeginPlay() override;
 	void MoveRight(const FInputActionValue& Value);
 	void MoveLeft(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, Category="PolyBat|Functions")
+	void Kick(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, Category="PolyBat|Functions")
+	void Punch(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PolyBat|Functions")
 	void MakeJump(const FInputActionValue & Value);

@@ -117,6 +117,8 @@ void ABat::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ABat::MoveRight);
 		EnhancedInputComponent->BindAction(MoveLeftAction, ETriggerEvent::Triggered, this, &ABat::MoveLeft);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABat::MakeJump);
+		EnhancedInputComponent->BindAction(KickAction, ETriggerEvent::Triggered, this, &ABat::Kick);
+		EnhancedInputComponent->BindAction(PunchAction, ETriggerEvent::Triggered, this, &ABat::Punch);
 	}
 }
 
@@ -172,6 +174,32 @@ void ABat::MoveLeft(const FInputActionValue& Value)
 		else if (CurrentPath == EPath::Right)
 		{
 			CurrentPath = EPath::Middle;
+		}
+	}
+}
+
+void ABat::Kick_Implementation(const FInputActionValue& Value)
+{
+	if (const bool IsPressed = Value.Get<bool>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bat (C++) | Kick"));
+
+		if (KickMontage.Num() > 0)
+		{
+			PlayAnimMontage(KickMontage[0]);
+		}
+	}
+}
+
+void ABat::Punch_Implementation(const FInputActionValue& Value)
+{
+	if (const bool IsPressed = Value.Get<bool>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bat (C++) | Punch"));
+
+		if (PunchMontage.Num() > 0)
+		{
+			PlayAnimMontage(PunchMontage[0]);
 		}
 	}
 }

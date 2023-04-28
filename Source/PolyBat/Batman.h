@@ -26,13 +26,30 @@ class POLYBAT_API ABatman : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ABatman();
+	
+	void Init();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PolyBat|Functions")
 	void MoveRight(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PolyBat|Functions")
 	void MoveLeft(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, Category="PolyBat|Functions")
+	void Kick(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, Category="PolyBat|Functions")
+	void Punch(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PolyBat|Functions")
+	void MakeJump(const FInputActionValue & Value);
+
+	UFUNCTION(BlueprintCallable, Category="PolyBat|Functions")
+	void SetMoving(const bool Value) { bIsMoving = Value;}
 
 public:	
 	// Called every frame
@@ -52,11 +69,32 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
 	class UInputAction * MoveLeftAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * KickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PolyBat|EnhancedInput")
+	class UInputAction * PunchAction;
+
+	UPROPERTY(BlueprintReadOnly, Category="PolyBat")
+	int CurrentLane;
+
+	UPROPERTY(BlueprintReadOnly, Category="PolyBat")
+	float LaneWidth;
+
+	UPROPERTY(BlueprintReadOnly, Category="PolyBat")
+	float TargetLocation;
+
+	UPROPERTY(BlueprintReadOnly, Category="PolyBat")
+	bool bIsMoving;
+
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
 	class UCapsuleComponent * Capsule;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
 	class USkeletalMeshComponent * BatmanMesh;
 
 	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
@@ -64,31 +102,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="PolyBat|Components")
 	class UCameraComponent *Camera;
-
-	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
-	float MoveDistance = 300.f;
-
-	FVector StartLocation;
-	FVector LeftLocation;
-	FVector MiddleLocation;
-	FVector RightLocation;
-
-	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
-	FVector MovementVelocity = FVector(0, 3000, 0);
 	
-
-	UPROPERTY(EditAnywhere, Category="PolyBat|Components")
-	float MovementSpeed = 20.0f;
-
 	UPROPERTY()
-	EOtherPath CurrentPath;
+	class AGothamTileManager * TileManager;
 
-	UPROPERTY()
-	EOtherPath PreviousPath;
-
-	UPROPERTY()
-	bool bIsMoving;
-
-	UPROPERTY()
-	float MovementAmount = 300.f;
+	
 };
